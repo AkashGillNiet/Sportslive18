@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HLS Stream with Quality Selector</title>
+    
+    <!-- Video.js Stylesheet -->
+    <link href="https://vjs.zencdn.net/7.11.4/video-js.css" rel="stylesheet" />
+
+    <!-- HLS.js for HLS playback -->
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+
+    <!-- Video.js Script -->
+    <script src="https://vjs.zencdn.net/7.11.4/video.min.js"></script>
+
+    <!-- Video.js HLS Quality Selector -->
+    <script src="https://cdn.jsdelivr.net/npm/videojs-hls-quality-selector@1.1.4/dist/videojs-hls-quality-selector.min.js"></script>
+</head>
+<body>
+
+    <h1>Live HLS Stream with Quality Selector</h1>
+    
+    <!-- Video.js Player -->
+    <video id="videoPlayer" class="video-js vjs-default-skin" controls preload="auto" width="640" height="360">
+        <source src="http://flbl16.112421.net:8082/4151818/index.m3u8?token=FYCMQWAK8R" type="application/x-mpegURL">
+    </video>
+
+    <script>
+        // Initialize Video.js Player
+        var player = videojs('videoPlayer');
+
+        // Check if HLS is supported by the browser
+        if (Hls.isSupported()) {
+            var video = document.getElementById('videoPlayer_html5_api');
+            var hls = new Hls();
+            hls.loadSource('http://flbl16.112421.net:8082/4151818/index.m3u8?token=FYCMQWAK8R');
+            hls.attachMedia(video);
+
+            // Handle quality change event
+            hls.on(Hls.Events.MANIFEST_PARSED, function () {
+                video.play();
+            });
+        }
+
+        // Enable HLS Quality Selector
+        player.hlsQualitySelector({
+            displayCurrentQuality: true
+        });
+    </script>
+
+</body>
+</html>
