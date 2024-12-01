@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Popup with Rounded Corners</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #121212;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+        }
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            visibility: hidden;
+            opacity: 0;
+            transition: visibility 0s, opacity 0.3s;
+            border-radius: 10px; /* बैकग्राउंड को हल्का गोल */
+        }
+        .popup-overlay.active {
+            visibility: visible;
+            opacity: 1;
+        }
+        .popup {
+            background: #222;
+            padding: 20px;
+            border-radius: 15px; /* पॉपअप बॉक्स को गोल */
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+        .popup h2 {
+            margin: 0 0 10px;
+        }
+        .popup button {
+            margin: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 25px; /* बटन को गोल */
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        .popup .join {
+            background-color: #007bff;
+            color: #fff;
+        }
+        .popup .cancel {
+            background-color: #ff0000;
+            color: #fff;
+        }
+        .star {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #fff;
+            border-radius: 50%; /* स्टार्स को गोल */
+            box-shadow: 0 0 8px #fff;
+            animation: fly 1s ease-out forwards;
+        }
+        @keyframes fly {
+            0% {
+                opacity: 1;
+                transform: translate(0, 0) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(calc(-50px + 100px * var(--randomX)), calc(-50px + 100px * var(--randomY))) scale(0.5);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="popup-overlay" id="popupOverlay">
+        <div class="popup">
+            <h2>For more live links, join our Telegram channel</h2>
+            <button class="join" onclick="createStars(this, 'https://t.me/your-telegram-link')">Join</button>
+            <button class="cancel" onclick="closePopup()">Cancel</button>
+        </div>
+    </div>
+
+    <script>
+        // पॉपअप को स्वचालित रूप से दिखाने के लिए
+        window.onload = function() {
+            document.getElementById('popupOverlay').classList.add('active');
+        };
+
+        // Cancel बटन पर क्लिक करने का फ़ंक्शन
+        function closePopup() {
+            document.getElementById('popupOverlay').classList.remove('active');
+        }
+
+        // स्टार्स बनाने का फ़ंक्शन
+        function createStars(button, link) {
+            for (let i = 0; i < 20; i++) {
+                const star = document.createElement('div');
+                star.classList.add('star');
+                star.style.left = `${Math.random() * button.offsetWidth}px`;
+                star.style.top = `${Math.random() * button.offsetHeight}px`;
+                star.style.setProperty('--randomX', Math.random());
+                star.style.setProperty('--randomY', Math.random());
+                button.appendChild(star);
+
+                // एनिमेशन खत्म होने के बाद स्टार को हटाएं
+                star.addEventListener('animationend', () => {
+                    star.remove();
+                });
+            }
+
+            // बटन के एनिमेशन के बाद टेलीग्राम चैनल पर जाएं
+            setTimeout(() => {
+                window.location.href = link;
+            }, 1000);
+        }
+    </script>
+</body>
+  </html>
