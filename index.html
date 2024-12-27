@@ -1,186 +1,163 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Circle Channel Design</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #1e1e1e; /* हल्का काला */
-            margin: 0;
-            padding: 0;
-            color: #fff; /* टेक्स्ट को सफेद */
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Niet EnterSports</title>
 
-        h1 {
-            text-align: center;
-            color: #fff;
-            margin: 20px 0;
-        }
+  <!-- Shaka Player CSS (Optional) -->
+  <link href="https://cdn.jsdelivr.net/npm/shaka-player@3.0.3/dist/controls.css" rel="stylesheet">
 
-        #video-player {
-            display: block;
-            width: 80%;
-            max-width: 900px;
-            margin: 20px auto;
-            border: 2px solid #333;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6);
-        }
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: #000;
+      height: 100%;
+    }
 
-        .channel-container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 20px;
-            margin: 30px auto;
-            max-width: 1200px;
-        }
+    /* Video container covering full screen */
+    .video-container {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
 
-        .channel-card {
-            text-align: center;
-            width: 150px;
-        }
+    /* Video should cover full screen, with object-fit to preserve aspect ratio */
+    #video {
+      width: 100%;
+      height: 100%;
+      object-fit: contain; /* Ensures the video fits within the screen without cropping */
+    }
 
-        .channel-image {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            margin: 0 auto;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
-            transition: transform 0.3s ease;
-        }
+    /* Logo styling - Top Center */
+    .logo {
+      position: absolute;
+      top: 10px; /* Space from the top */
+      left: 50%;
+      transform: translateX(-50%); /* Center the logo horizontally */
+      z-index: 10;
+      background-color: transparent; 
+      padding: 0;  /* Remove padding to avoid space around the logo */
+    }
 
-        .channel-image:hover {
-            transform: scale(1.1);
-        }
+    .logo img {
+      width: 100px;  /* Adjust the size of the logo */
+      height: auto;
+    }
 
-        .channel-name {
-            margin-top: 10px;
-            padding: 10px;
-            background-color: #3498db;
-            color: white;
-            border-radius: 5px;
-            font-weight: bold;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
-            cursor: pointer;
-        }
+    /* Telegram Popup Styling - Fullscreen with blur effect */
+    .popup {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent background */
+      backdrop-filter: blur(5px); /* Apply blur effect */
+      display: none; /* Hidden by default */
+      z-index: 20;
+      justify-content: center;
+      align-items: center;
+      display: flex; /* Flexbox to center content */
+      text-align: center;
+    }
 
-        .channel-name:hover {
-            background-color: #2980b9;
-        }
+    .popup-content {
+      background-color: #2c2c2c;
+      color: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      width: 80%;
+      max-width: 500px;
+    }
 
-        .telegram-button {
-            text-align: center;
-            margin-top: 20px;
-        }
+    .popup h2 {
+      margin-bottom: 20px;
+    }
 
-        .telegram-link {
-            display: inline-block;
-            background-color: #0088cc;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 8px;
-            font-weight: bold;
-            text-decoration: none;
-            transition: background-color 0.3s ease, transform 0.3s ease;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
-        }
+    .popup button {
+      background-color: #6a4e23;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      margin: 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+    }
 
-        .telegram-link:hover {
-            background-color: #006f9e;
-            transform: scale(1.05);
-        }
+    .popup button:hover {
+      background-color: #8b6c3e;
+    }
 
-        @media (max-width: 768px) {
-            .channel-card {
-                width: 100px;
-            }
-        }
-    </style>
+    /* Hide the popup when "Already Joined" is clicked */
+    .popup.closed {
+      display: none !important;
+    }
+  </style>
 </head>
 <body>
+  <div class="video-container">
+    <!-- Video element for Shaka Player -->
+    <video id="video" controls></video>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Popup with Rounded Corners</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #121212;
-            color: #fff;
-            margin: 0;
-            padding: 0;
-        }
-        .popup-overlay {
-            position: fixed;
-            top: 0;
-         
-    <h1>Live Stream by Niet</h1>
+    <!-- Logo (Image) -->
+    <div class="logo">
+      <img src="https://raw.githubusercontent.com/AkashGillNiet/TNT3/refs/heads/main/nes.png" alt="Logo">
+    </div>
+  </div>
 
-    <!-- Video Player -->
-    <video id="video-player" controls></video>
+  <!-- Telegram Join Popup -->
+  <div class="popup" id="popup">
+    <div class="popup-content">
+      <h2>Join our Telegram Channel</h2>
+      <button id="join-now">Join Now</button>
+      <button id="already-joined">Already Joined</button>
+    </div>
+  </div>
 
-    <!-- Channel Cards -->
-    <div class="channel-container">
-        <div class="channel-card">
-            <img class="channel-image" src="https://raw.githubusercontent.com/AkashGillNiet/NietSports/refs/heads/main/images%20(6).jpeg" alt="TNT Sports">
-            <div class="channel-name" onclick="playStream('https://tes1.mylife1.top:8088/mobile/stream3_240p/playlist.m3u8?vidictid=200574049059&id=10&pk=c4c444c85d8b238700b452c8e69a581c914ef6babfd38a00b3e8c9d407b40fa543d523010fae682b2229b13dc1ba240ef54be102e2dce5b645854feca9098f94')">TNT Sports</div>
-        </div>
-        <div class="channel-card">
-            <img class="channel-image" src="https://raw.githubusercontent.com/AkashGillNiet/NietSports/refs/heads/main/images%20(7).jpeg" alt="Star Sports">
-            <div class="channel-name" onclick="playStream('https://vkvsd14.okcdn.ru/cmaf/7381061929703/sig/9ldvDRxTE30/srcIp/13.232.205.105/urls/185.226.53.64/expires/1733264195124/clientType/13/srcAg/CHROME/fromCache/1/mid/8776469523431/id/7381061929703/get/COfX5PK2_wEQ6AcYAzIICgYIgAUQ6AI6BAjE2AJaBggBEAIoF2ICCBBpbYZ53zFQOQ/track.m3u8')">Star Sports</div>
-        </div>
-        <div class="channel-card">
-            <img class="channel-image" src="https://raw.githubusercontent.com/AkashGillNiet/NietSports/refs/heads/main/596cd9eb7fa44cb082008078.format-webp.width-1440_bJ7uveKWAfmUPxvP.webp" alt="Sky Sports">
-            <div class="channel-name" onclick="playStream('https://tes1.mylife1.top:8088/mobile/stream5_240p/playlist.m3u8?vidictid=20057303193&id=18&pk=c4c444c85d8b238700b452c8e69a581c914ef6babfd38a00b3e8c9d407b40fa543d523010fae682b2229b13dc1ba240ef54be102e2dce5b645854feca9098f94')">Sky Sports</div>
-        </div>
-        <div class="channel-card">
-            <img class="channel-image" src="https://raw.githubusercontent.com/AkashGillNiet/NietSports/refs/heads/main/3f54a65a0eee4b95612e18e39a85f95a0ecc2202cebe3ca664b70d86f1036378.webp" alt="Willow Cricket">
-            <div class="channel-name" onclick="playStream('https://tes1.mylife1.top:8088/mobile/stream9_240p/playlist.m3u8?vidictid=200574421646&id=34&pk=c4c444c85d8b238700b452c8e69a581c914ef6babfd38a00b3e8c9d407b40fa543d523010fae682b2229b13dc1ba240ef54be102e2dce5b645854feca9098f94')">Willow Cricket</div>
-        </div>
-        <div class="channel-card">
-            <img class="channel-image" src="https://raw.githubusercontent.com/AkashGillNiet/NietSports/refs/heads/main/images%20(9).jpeg" alt="PTV Sports">
-            <div class="channel-name" onclick="playStream('https://tes1.mylife1.top:8088/mobile/stream2_240p/playlist.m3u8?vidictid=200571604617&id=6&pk=c4c444c85d8b238700b452c8e69a581c914ef6babfd38a00b3e8c9d407b40fa543d523010fae682b2229b13dc1ba240ef54be102e2dce5b645854feca9098f94')">PTV Sports</div>
-        </div>
-        <div class="channel-card">
-            <img class="channel-image" src="https://raw.githubusercontent.com/AkashGillNiet/NietSports/refs/heads/main/FanCode_logo.svg.png" alt="Fancode">
-            <div class="channel-name" onclick="playStream('https://dai.fancode.com/primary/113724_english_hls_5464ta-di/index.m3u8')">Fancode</div>
-        </div>
-        <div class="channel-card">
-            <img class="channel-image" src="https://raw.githubusercontent.com/AkashGillNiet/NietSports/refs/heads/main/jio-cinema.png" alt="Jio Cinema">
-            <div class="channel-name" onclick="playStream('https://prod-sports-eng-cf.jiocinema.com/hls/live/2100306/hd_akamai_merged_avc_eng_cricket_m7_301124/master.m3u8')">Jio Cinema</div>
-        </div>
-        <div class="channel-card">
-            <img class="channel-image" src="https://raw.githubusercontent.com/AkashGillNiet/NietSports/refs/heads/main/images%20(10).jpeg" alt="Sony Liv">
-            <div class="channel-name" onclick="playStream('https://dai.google.com/ssai/event/RLuKHGGZS72Dss9NPWaldw/master.m3u8')">Sony Liv</div>
-        </div>
-        <div class="channel-card">
-            <img class="channel-image" src="https://via.placeholder.com/100" alt="Channel 9">
-            <div class="channel-name" onclick="playStream('YOUR_LINK_9')">Channel 9</div>
-        </div>
-        <div class="channel-card">
-            <img class="channel-image" src="https://via.placeholder.com/100" alt="Channel 10">
-            <div class="channel-name" onclick="playStream('YOUR_LINK_10')">Channel 10</div>
-        </div>
-    </div>
+  <!-- Shaka Player JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/3.0.3/shaka-player.compiled.js"></script>
 
-    <!-- Telegram Button -->
-    <div class="telegram-button">
-        <a href="https://t.me/SportsLiveLink18" class="telegram-link" target="_blank">Join on Telegram</a>
-    </div>
+  <script>
+    // The URL containing the media stream (without DRM key)
+    const streamUrl = "https://jcevents.jiocinema.com/bpk-tv/Sports18_Khel_voot_MOB/Fallback/hdntl=exp=1735306526~acl=/*~id=aaf549ec51984c86b32dd7de3e1334c7~data=hdntl~hmac=39110d6745f41a6f9aa1a3e69e5cc4adf51893d7864df3addf7d6691e92b2ba6/Sports18_Khel_voot_MOB-audio_98838_eng=98800-video=1680400/index.m3u8";  // No DRM key here
 
-    <script>
-        function playStream(url) {
-            var player = document.getElementById('video-player');
-            player.style.display = 'block';
-            player.src = url;
-            player.play().catch((error) => {
-                console.error("Error playing video:", error);
-            });
-        }
-    </script>
+    
+    // Initialize Shaka Player
+    const player = new shaka.Player(document.getElementById('video'));
+
+    // Shaka Player error handler
+    player.addEventListener('error', (event) => {
+      console.error('Error code', event.detail.code, 'object', event.detail);
+    });
+      
+    // Load the stream
+    player.load(streamUrl).then(() => {
+      console.log('The video has been loaded!');
+      document.getElementById('video').play();  // Play the video once loaded
+    }).catch((error) => {
+      console.error('Error loading the video:', error);
+    });
+
+    // Show the popup immediately when the page loads
+    window.onload = function() {
+      document.getElementById('popup').style.display = 'flex';
+    };
+
+    // Button functionality
+    document.getElementById('join-now').onclick = function() {
+      window.open('https://t.me/SportsLiveLink18', '_blank'); // Replace with your actual Telegram channel link
+      document.getElementById('popup').classList.add('closed'); // Close the popup
+    };
+
+    document.getElementById('already-joined').onclick = function() {
+      document.getElementById('popup').classList.add('closed'); // Close the popup
+    };
+  </script>
 </body>
-    </html>
+</html>
